@@ -26,5 +26,16 @@ namespace gRPCService.Services
 			response.Message = Convert.ToString(builder);
 			return response;
 		}
+
+		public override async Task ServerStreaming(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
+		{
+			for (int i = 1; i <= 100; i++)
+			{
+				await responseStream.WriteAsync(new Response()
+				{
+					Message = $"{i}) Server received this content in the request: \n{request.Content}"
+				});
+			}
+		}
 	}
 } 
