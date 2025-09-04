@@ -31,6 +31,9 @@ namespace gRPCService.Services
 		{
 			for (int i = 1; i <= 100; i++)
 			{
+				if (context.CancellationToken.IsCancellationRequested)
+					return;
+
 				await responseStream.WriteAsync(new Response()
 				{
 					Message = $"{i}) Server received this content in the request: \n{request.Content}"

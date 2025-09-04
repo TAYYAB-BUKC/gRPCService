@@ -49,14 +49,26 @@ async void ConsumeClientStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 
 async void ConsumeServerStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
 {
-	var request = client.ServerStreaming(new Request()
+	try
 	{
-		Content = "Hello gRPC Server"
-	});
+		var cancellationToken = new CancellationTokenSource();
+		var request = client.ServerStreaming(new Request()
+		{
+			Content = "Hello gRPC Server"
+		});
 
-	await foreach (var response in request.ResponseStream.ReadAllAsync())
+		await foreach (var response in request.ResponseStream.ReadAllAsync(cancellationToken.Token))
+		{
+			Console.WriteLine(response.Message);
+			if (response.Message.Contains("25"))
+			{
+				cancellationToken.Cancel();
+			}
+		}
+	}
+	catch (Exception ex)
 	{
-		Console.WriteLine(response.Message);
+
 	}
 }
 
