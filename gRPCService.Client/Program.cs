@@ -12,7 +12,9 @@ using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
 
 var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(channel);
 
-ConsumeUnaryMethod(client);
+//ConsumeUnaryMethod(client);
+
+ConsumeClientStreamingMethod(client);
 
 Console.ReadKey(true);
 
@@ -20,5 +22,22 @@ void ConsumeUnaryMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionCli
 {
 	var request = new Request() { Content = "Hello gRPC Server" };
 	var response  = client.Unary(request);
+	Console.WriteLine(response.Message);
+}
+
+async void ConsumeClientStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
+{
+	using var request = client.ClientStreaming();
+	for (var i = 1; i <= 100; i++)
+	{
+		//Console.WriteLine($"Client says: Hello to the gRPC Server {i} times.");
+		await request.RequestStream.WriteAsync(new Request()
+		{
+			Content = $"Client says: Hello to the gRPC Server {i} times."
+		});
+	}
+	
+	await request.RequestStream.CompleteAsync();
+	var response = await request;
 	Console.WriteLine(response.Message);
 }
