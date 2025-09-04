@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using Grpc.Core;
 using Grpc.Net.Client;
 using gRPCService.Basics;
 
@@ -14,7 +15,9 @@ var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(cha
 
 //ConsumeUnaryMethod(client);
 
-ConsumeClientStreamingMethod(client);
+//ConsumeClientStreamingMethod(client);
+
+ConsumeServerStreamingMethod(client);
 
 Console.ReadKey(true);
 
@@ -40,4 +43,17 @@ async void ConsumeClientStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 	await request.RequestStream.CompleteAsync();
 	var response = await request;
 	Console.WriteLine(response.Message);
+}
+
+async void ConsumeServerStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
+{
+	var request = client.ServerStreaming(new Request()
+	{
+		Content = "Hello gRPC Server"
+	});
+
+	await foreach (var response in request.ResponseStream.ReadAllAsync())
+	{
+		Console.WriteLine(response.Message);
+	}
 }
