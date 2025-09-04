@@ -26,7 +26,7 @@ Console.ReadKey(true);
 void ConsumeUnaryMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
 {
 	var request = new Request() { Content = "Hello gRPC Server" };
-	var response  = client.Unary(request);
+	var response  = client.Unary(request, deadline: DateTime.UtcNow.AddMicroseconds(500));
 	Console.WriteLine(response.Message);
 }
 
@@ -41,7 +41,7 @@ async void ConsumeClientStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 			Content = $"Client says: Hello to the gRPC Server {i} times."
 		});
 	}
-	
+
 	await request.RequestStream.CompleteAsync();
 	var response = await request;
 	Console.WriteLine(response.Message);
