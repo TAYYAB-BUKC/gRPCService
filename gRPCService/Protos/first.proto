@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+option csharp_namespace = "gRPCService.Basics";
+package gRPCServiceBasics;
+
+message Request{
+    string content = 1;
+}
+
+message Response{
+    string message = 1;
+}
+
+service FirstGRPCServiceDefinition{
+    rpc Unary(Request) returns (Response);
+    rpc ClientStreaming(stream Request) returns (Response);
+    rpc ServerStreaming(Request) returns (stream Response);
+    rpc BiDirectionalStreaming(stream Request) returns (stream Response);
+}
