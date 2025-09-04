@@ -19,6 +19,8 @@ var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(cha
 
 ConsumeServerStreamingMethod(client);
 
+ConsumeBiDirectionalStreamingMethod(client);
+
 Console.ReadKey(true);
 
 void ConsumeUnaryMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
@@ -55,5 +57,26 @@ async void ConsumeServerStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 	await foreach (var response in request.ResponseStream.ReadAllAsync())
 	{
 		Console.WriteLine(response.Message);
+	}
+}
+
+async void ConsumeBiDirectionalStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
+{
+	using (var request = client.BiDirectionalStreaming())
+	{
+		for (int i = 1; i <= 20; i++)
+		{
+			await request.RequestStream.WriteAsync(new Request()
+			{
+				Content = $"Client: Hello to the gRPC Server {i} times."
+			});
+		}
+
+		await request.RequestStream.CompleteAsync();
+
+		while (await request.ResponseStream.MoveNext())
+		{
+			Console.WriteLine(request.ResponseStream.Current.Message);
+		}
 	}
 }
