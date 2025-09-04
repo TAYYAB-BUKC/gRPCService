@@ -37,5 +37,16 @@ namespace gRPCService.Services
 				});
 			}
 		}
+
+		public override async Task BiDirectionalStreaming(IAsyncStreamReader<Request> requestStream, IServerStreamWriter<Response> responseStream, ServerCallContext context)
+		{
+			while (await requestStream.MoveNext())
+			{
+				await responseStream.WriteAsync(new Response()
+				{
+					Message = requestStream.Current.Content
+				});
+			}
+		}
 	}
 } 
