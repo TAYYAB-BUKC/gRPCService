@@ -44,6 +44,9 @@ namespace gRPCService.Services
 					Message = $"{i}) Server received this content in the request: \n{request.Content}"
 				});
 			}
+
+			var trailer = new Metadata.Entry("my-first-trailer", "my-first-trailer-value");
+			context.ResponseTrailers.Add(trailer);
 		}
 
 		public override async Task BiDirectionalStreaming(IAsyncStreamReader<Request> requestStream, IServerStreamWriter<Response> responseStream, ServerCallContext context)
