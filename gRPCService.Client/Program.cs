@@ -14,11 +14,11 @@ using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
 
 var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(channel);
 
-//ConsumeUnaryMethod(client);
+ConsumeUnaryMethod(client);
 
 //ConsumeClientStreamingMethod(client);
 
-ConsumeServerStreamingMethod(client);
+//ConsumeServerStreamingMethod(client);
 
 //ConsumeBiDirectionalStreamingMethod(client);
 
@@ -26,8 +26,13 @@ Console.ReadKey(true);
 
 void ConsumeUnaryMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
 {
+	var metaData = new Metadata()
+	{
+		{ "grpc-accept-encoding", "gzip" }
+	};
 	var request = new Request() { Content = "Hello gRPC Server" };
-	var response  = client.Unary(request, deadline: DateTime.UtcNow.AddMicroseconds(500));
+	//var response  = client.Unary(request, deadline: DateTime.UtcNow.AddMicroseconds(500));
+	var response = client.Unary(request, deadline: DateTime.UtcNow.AddMinutes(5));
 	Console.WriteLine(response.Message);
 }
 
