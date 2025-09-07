@@ -1,11 +1,13 @@
 ﻿using Grpc.Core;
 using gRPCService.Basics;
+using Microsoft.AspNetCore.Authorization;
 using System.Text;
 
 namespace gRPCService.Services
 {
 	public class FirstGRPCService : FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionBase, IFirstGRPCService
 	{
+		[Authorize]
 		public override Task<Response> Unary(Request request, ServerCallContext context)
 		{
 			#region Compression
