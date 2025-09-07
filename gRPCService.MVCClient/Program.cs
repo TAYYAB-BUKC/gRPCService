@@ -1,4 +1,5 @@
 using gRPCService.Basics;
+using gRPCService.MVCClient.GRPCInterceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddGrpcClient<FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient>(options =>
 {
 	options.Address = new Uri("https://localhost:7106/");
-});
+}).AddInterceptor<ClientLoggerInterceptor>();
+
+builder.Services.AddScoped<ClientLoggerInterceptor>();
 
 var app = builder.Build();
 
