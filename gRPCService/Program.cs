@@ -1,6 +1,9 @@
+using Grpc.Net.Compression;
 using gRPCService.Interceptors;
 using gRPCService.Services;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using System.ComponentModel;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc(options =>
 {
 	options.Interceptors.Add<ServerLoggerInterceptor>();
+	options.ResponseCompressionAlgorithm = "gzip";
+	options.ResponseCompressionLevel = CompressionLevel.SmallestSize;
+	// Custom Provider Registration
+	//options.CompressionProviders = new List<ICompressionProvider>
+	//{
+	//	new GzipCompressionProvider(CompressionLevel.SmallestSize)
+	//};
 });
 
 var app = builder.Build();
