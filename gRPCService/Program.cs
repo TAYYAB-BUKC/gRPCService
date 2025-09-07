@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
 using System.IO.Compression;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 						IssuerSigningKey = JwtHelper.SecurityKey,
 					};
 				});
+
+builder.Services.AddAuthorization(options =>
+{
+	options.AddPolicy("DefaultPolicy", policy =>
+	{
+		policy.RequireClaim(ClaimTypes.Name);
+		policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+	});
+});
 
 var app = builder.Build();
 
