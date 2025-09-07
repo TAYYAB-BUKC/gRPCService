@@ -1,9 +1,14 @@
+using gRPCService.Interceptors;
 using gRPCService.Services;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(options =>
+{
+	options.Interceptors.Add<ServerLoggerInterceptor>();
+});
 
 var app = builder.Build();
 
