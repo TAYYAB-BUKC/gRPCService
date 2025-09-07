@@ -4,12 +4,12 @@ using System.Text;
 
 namespace gRPCService.Services
 {
-	public class FirstGRPCService : FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionBase
+	public class FirstGRPCService : FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionBase, IFirstGRPCService
 	{
 		public override Task<Response> Unary(Request request, ServerCallContext context)
 		{
 			context.WriteOptions = new WriteOptions(WriteFlags.NoCompress);
-			if(!context.RequestHeaders.Where(header => header.Key == "grpc-previous-rpc-attempts").Any())
+			if (!context.RequestHeaders.Where(header => header.Key == "grpc-previous-rpc-attempts").Any())
 			{
 				throw new RpcException(new Status(StatusCode.Internal, "TRY AGAIN -_-"));
 			}
