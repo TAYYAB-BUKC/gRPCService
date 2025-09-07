@@ -72,10 +72,19 @@ async void ConsumeServerStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 			}
 		}
 	}
+	catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
+	{
+
+	}
+	catch (RpcException ex) when (ex.StatusCode == StatusCode.PermissionDenied)
+	{
+
+	}
 	catch (Exception ex)
 	{
 		
-	}finally
+	}
+	finally
 	{
 		var trailers = request.GetTrailers();
 		var individualTrailer = trailers.GetValue("my-first-trailer");
