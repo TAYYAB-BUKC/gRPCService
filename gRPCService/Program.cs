@@ -1,7 +1,10 @@
 using Grpc.Net.Compression;
+using gRPCService.Auth;
 using gRPCService.Interceptors;
 using gRPCService.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
 using System.IO.Compression;
 
@@ -19,6 +22,20 @@ builder.Services.AddGrpc(options =>
 	//	new GzipCompressionProvider(CompressionLevel.SmallestSize)
 	//};
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddJwtBearer(options =>
+				{
+					options.RequireHttpsMetadata = false;
+					options.SaveToken = true;
+					options.TokenValidationParameters = new TokenValidationParameters()
+					{
+						ValidateAudience = false,
+						ValidateIssuer = false,
+						ValidateIssuerSigningKey = true,
+						IssuerSigningKey = JwtHelper.SecurityKey,
+					};
+				});
 
 var app = builder.Build();
 
