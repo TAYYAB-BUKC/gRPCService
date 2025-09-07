@@ -2,6 +2,7 @@
 using Grpc.Core;
 using Grpc.Net.Client;
 using gRPCService.Basics;
+using static Grpc.Core.Metadata;
 
 string SERVER_URL = "https://localhost:7106/";
 var channelOptions = new GrpcChannelOptions()
@@ -19,7 +20,7 @@ var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(cha
 
 ConsumeServerStreamingMethod(client);
 
-ConsumeBiDirectionalStreamingMethod(client);
+//ConsumeBiDirectionalStreamingMethod(client);
 
 Console.ReadKey(true);
 
@@ -52,10 +53,15 @@ async void ConsumeServerStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 	try
 	{
 		var cancellationToken = new CancellationTokenSource();
+		var metadata = new Metadata();
+		metadata.Add("my-first-key", "my-first-value");
+		metadata.Add("my-second-key", "my-second-value");
+		metadata.Add(new Entry("my-third-key", "my-third-value"));
 		var request = client.ServerStreaming(new Request()
 		{
 			Content = "Hello gRPC Server"
-		});
+		},
+		headers: metadata);
 
 		await foreach (var response in request.ResponseStream.ReadAllAsync(cancellationToken.Token))
 		{
