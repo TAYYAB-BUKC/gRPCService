@@ -7,10 +7,27 @@ using gRPCService.Basics;
 using Microsoft.Extensions.DependencyInjection;
 using static Grpc.Core.Metadata;
 
+var retryPolicy = new MethodConfig()
+{
+	Names = { MethodName.Default },
+	RetryPolicy = new RetryPolicy()
+	{
+		MaxAttempts = 5,
+		BackoffMultiplier = 1,
+		InitialBackoff = TimeSpan.FromSeconds(5),
+		MaxBackoff = TimeSpan.FromSeconds(25),
+		RetryableStatusCodes = { StatusCode.Internal }
+	}
+};
+
 string SERVER_URL = "https://localhost:7106/";
+
 var channelOptions = new GrpcChannelOptions()
 {
-
+	ServiceConfig = new ServiceConfig()
+	{
+		MethodConfigs = { retryPolicy }
+	}
 };
 
 var serversFactory = new StaticResolverFactory(options => new[]
@@ -22,17 +39,17 @@ var serversFactory = new StaticResolverFactory(options => new[]
 var serviceCollection = new ServiceCollection();
 serviceCollection.AddSingleton<ResolverFactory>(serversFactory);
 
-//using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
-using var channel = GrpcChannel.ForAddress("static://localhost", new GrpcChannelOptions()
-{
-	//Credentials = ChannelCredentials.Insecure,
-	Credentials = ChannelCredentials.SecureSsl,
-	ServiceProvider = serviceCollection.BuildServiceProvider(),
-	ServiceConfig = new ServiceConfig()
-	{
-		LoadBalancingConfigs = { new RoundRobinConfig() },
-	}
-});
+using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
+//using var channel = GrpcChannel.ForAddress("static://localhost", new GrpcChannelOptions()
+//{
+//	//Credentials = ChannelCredentials.Insecure,
+//	Credentials = ChannelCredentials.SecureSsl,
+//	ServiceProvider = serviceCollection.BuildServiceProvider(),
+//	ServiceConfig = new ServiceConfig()
+//	{
+//		LoadBalancingConfigs = { new RoundRobinConfig() },
+//	}
+//});
 
 var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(channel);
 
