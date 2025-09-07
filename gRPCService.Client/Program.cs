@@ -20,13 +20,25 @@ var retryPolicy = new MethodConfig()
 	}
 };
 
+var hedgingPolicy = new MethodConfig()
+{
+	Names = { MethodName.Default },
+	HedgingPolicy = new HedgingPolicy()
+	{
+		MaxAttempts = 5,
+		HedgingDelay = TimeSpan.FromSeconds(5),
+		NonFatalStatusCodes = { StatusCode.Internal },
+	}
+};
+
 string SERVER_URL = "https://localhost:7106/";
 
 var channelOptions = new GrpcChannelOptions()
 {
 	ServiceConfig = new ServiceConfig()
 	{
-		MethodConfigs = { retryPolicy }
+		//MethodConfigs = { retryPolicy }
+		MethodConfigs = { hedgingPolicy }
 	}
 };
 
