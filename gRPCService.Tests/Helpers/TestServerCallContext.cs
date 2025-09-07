@@ -41,5 +41,10 @@ namespace gRPCService.Tests.Helpers
 		{
 			throw new NotImplementedException();
 		}
+
+		public static TestServerCallContext Create(Metadata? requestHeaders = null, CancellationToken cancellationToken = default)
+		{
+			return new TestServerCallContext(requestHeaders ?? new Metadata(), cancellationToken);
+		}
 	}
 }
