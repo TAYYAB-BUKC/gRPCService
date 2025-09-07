@@ -1,3 +1,4 @@
+using gRPCService.Auth;
 using gRPCService.Basics;
 using gRPCService.MVCClient.GRPCInterceptors;
 
@@ -9,7 +10,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddGrpcClient<FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient>(options =>
 {
 	options.Address = new Uri("https://localhost:7106/");
-}).AddInterceptor<ClientLoggerInterceptor>();
+})
+.AddInterceptor<ClientLoggerInterceptor>()
+.AddCallCredentials((context, metadata) =>
+{
+	var securityToken = JwtHelper.GenerateJwtToken("MVCClient");
+	if (!string.IsNullOrWhiteSpace(securityToken))
+	{
+		metadata.Add("Authorization", $"Bearer {securityToken}");
+	}
+
+	return Task.CompletedTask;
+});
 
 builder.Services.AddScoped<ClientLoggerInterceptor>();
 
