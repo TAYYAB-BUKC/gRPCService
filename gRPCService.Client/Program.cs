@@ -50,31 +50,35 @@ async void ConsumeClientStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServ
 
 async void ConsumeServerStreamingMethod(FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient client)
 {
+	var cancellationToken = new CancellationTokenSource();
+	var metadata = new Metadata();
+	metadata.Add("my-first-key", "my-first-value");
+	metadata.Add("my-second-key", "my-second-value");
+	metadata.Add(new Entry("my-third-key", "my-third-value"));
+	var request = client.ServerStreaming(new Request()
+	{
+		Content = "Hello gRPC Server"
+	},
+	headers: metadata);
+
 	try
 	{
-		var cancellationToken = new CancellationTokenSource();
-		var metadata = new Metadata();
-		metadata.Add("my-first-key", "my-first-value");
-		metadata.Add("my-second-key", "my-second-value");
-		metadata.Add(new Entry("my-third-key", "my-third-value"));
-		var request = client.ServerStreaming(new Request()
-		{
-			Content = "Hello gRPC Server"
-		},
-		headers: metadata);
-
 		await foreach (var response in request.ResponseStream.ReadAllAsync(cancellationToken.Token))
 		{
 			Console.WriteLine(response.Message);
 			if (response.Message.Contains("25"))
 			{
-				cancellationToken.Cancel();
+				//cancellationToken.Cancel();
 			}
 		}
 	}
 	catch (Exception ex)
 	{
-
+		
+	}finally
+	{
+		var trailers = request.GetTrailers();
+		var individualTrailer = trailers.GetValue("my-first-trailer");
 	}
 }
 
