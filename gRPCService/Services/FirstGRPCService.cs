@@ -8,6 +8,7 @@ namespace gRPCService.Services
 	{
 		public override Task<Response> Unary(Request request, ServerCallContext context)
 		{
+			context.WriteOptions = new WriteOptions(WriteFlags.NoCompress);
 			return Task.FromResult(new Response()
 			{
 				Message = $"Server received this content in the request: \n\n{request.Content}"
