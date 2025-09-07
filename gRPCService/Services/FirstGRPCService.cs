@@ -29,6 +29,11 @@ namespace gRPCService.Services
 
 		public override async Task ServerStreaming(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
 		{
+			var firstHeader = context.RequestHeaders.Get("my-first-key");
+			var secondHeader = context.RequestHeaders.Get("my-second-key");
+			var firstHeaderValue = firstHeader is not null ? firstHeader.Value : null;
+			var secondHeaderValue = secondHeader is not null ? secondHeader.Value : null;
+
 			for (int i = 1; i <= 100; i++)
 			{
 				if (context.CancellationToken.IsCancellationRequested)
