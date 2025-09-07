@@ -1,7 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Grpc.Core;
 using Grpc.Net.Client;
+using Grpc.Net.Client.Balancer;
+using Grpc.Net.Client.Configuration;
 using gRPCService.Basics;
+using Microsoft.Extensions.DependencyInjection;
 using static Grpc.Core.Metadata;
 
 string SERVER_URL = "https://localhost:7106/";
@@ -10,7 +13,26 @@ var channelOptions = new GrpcChannelOptions()
 
 };
 
-using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
+var serversFactory = new StaticResolverFactory(options => new[]
+{
+	new BalancerAddress("localhost", 7106),
+	new BalancerAddress("localhost", 7107),
+});
+
+var serviceCollection = new ServiceCollection();
+serviceCollection.AddSingleton<ResolverFactory>(serversFactory);
+
+//using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
+using var channel = GrpcChannel.ForAddress("static://localhost", new GrpcChannelOptions()
+{
+	//Credentials = ChannelCredentials.Insecure,
+	Credentials = ChannelCredentials.SecureSsl,
+	ServiceProvider = serviceCollection.BuildServiceProvider(),
+	ServiceConfig = new ServiceConfig()
+	{
+		LoadBalancingConfigs = { new RoundRobinConfig() },
+	}
+});
 
 var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(channel);
 

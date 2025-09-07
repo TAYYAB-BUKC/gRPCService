@@ -11,7 +11,7 @@ namespace gRPCService.Services
 			context.WriteOptions = new WriteOptions(WriteFlags.NoCompress);
 			return Task.FromResult(new Response()
 			{
-				Message = $"Server received this content in the request: \n\n{request.Content}"
+				Message = $"Server({context.Host}) received this content in the request: \n{request.Content}"
 			});
 		}
 
