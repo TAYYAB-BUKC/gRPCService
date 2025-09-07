@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPCService.Client", "gRPCS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPCService.MVCClient", "gRPCService.MVCClient\gRPCService.MVCClient.csproj", "{77146142-56BB-4741-9E95-39244B7560B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPCService.Tests", "gRPCService.Tests\gRPCService.Tests.csproj", "{FA1878E0-1E66-41FD-A421-175953C457A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{77146142-56BB-4741-9E95-39244B7560B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77146142-56BB-4741-9E95-39244B7560B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77146142-56BB-4741-9E95-39244B7560B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA1878E0-1E66-41FD-A421-175953C457A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1878E0-1E66-41FD-A421-175953C457A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA1878E0-1E66-41FD-A421-175953C457A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1878E0-1E66-41FD-A421-175953C457A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
