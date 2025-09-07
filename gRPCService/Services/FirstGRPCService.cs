@@ -9,6 +9,20 @@ namespace gRPCService.Services
 		public override Task<Response> Unary(Request request, ServerCallContext context)
 		{
 			context.WriteOptions = new WriteOptions(WriteFlags.NoCompress);
+			if(!context.RequestHeaders.Where(header => header.Key == "grpc-previous-rpc-attempts").Any())
+			{
+				throw new RpcException(new Status(StatusCode.Internal, "TRY AGAIN -_-"));
+			}
+
+			if (context.RequestHeaders.Where(header => header.Key == "grpc-previous-rpc-attempts").Any())
+			{
+				int value = Convert.ToInt32((context.RequestHeaders.Where(header => header.Key == "grpc-previous-rpc-attempts").FirstOrDefault().Value));
+				if (value < 3)
+				{
+					throw new RpcException(new Status(StatusCode.Internal, "TRY AGAIN -_-"));
+				}
+			}
+
 			return Task.FromResult(new Response()
 			{
 				Message = $"Server({context.Host}) received this content in the request: \n{request.Content}"
