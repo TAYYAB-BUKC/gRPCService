@@ -1,7 +1,9 @@
-using gRPCService.BlazorWebClient.Client.Pages;
 using gRPCService.BlazorWebClient.Components;
+using gRPCService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddGrpc();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -30,5 +32,7 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
 	.AddInteractiveWebAssemblyRenderMode()
 	.AddAdditionalAssemblies(typeof(gRPCService.BlazorWebClient.Client._Imports).Assembly);
+
+app.MapGrpcService<FirstGRPCService>();
 
 app.Run();

@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\gRPCService\gRPCService.csproj" />
     <ProjectReference Include="..\gRPCService.BlazorWebClient.Client\gRPCService.BlazorWebClient.Client.csproj" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.71.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
   </ItemGroup>
 
