@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Grpc.Core;
+using Grpc.Health.V1;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
@@ -62,6 +63,10 @@ using var channel = GrpcChannel.ForAddress(SERVER_URL, channelOptions);
 //		LoadBalancingConfigs = { new RoundRobinConfig() },
 //	}
 //});
+
+var healthClient = new Health.HealthClient(channel);
+var healthResult = await healthClient.CheckAsync(new HealthCheckRequest());
+Console.WriteLine($"Health Status: {healthResult.Status}");
 
 var client = new FirstGRPCServiceDefinition.FirstGRPCServiceDefinitionClient(channel);
 
