@@ -4,9 +4,11 @@ using Grpc.Health.V1;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
+using Grpc.Reflection.V1Alpha;
 using gRPCService.Basics;
 using Microsoft.Extensions.DependencyInjection;
 using static Grpc.Core.Metadata;
+using static Grpc.Reflection.V1Alpha.ServerReflection;
 
 var retryPolicy = new MethodConfig()
 {
@@ -33,6 +35,23 @@ var hedgingPolicy = new MethodConfig()
 };
 
 string SERVER_URL = "https://localhost:7106/";
+
+using var serverReflectionChannel = GrpcChannel.ForAddress(SERVER_URL);
+var serverReflectionClient = new ServerReflectionClient(serverReflectionChannel);
+
+ServerReflectionRequest request = new ServerReflectionRequest() { ListServices = "" };
+using var actualRequest = serverReflectionClient.ServerReflectionInfo();
+await actualRequest.RequestStream.WriteAsync(request);
+await actualRequest.RequestStream.CompleteAsync();
+
+while (await actualRequest.ResponseStream.MoveNext())
+{
+	var response = actualRequest.ResponseStream.Current;
+	foreach (var service in response.ListServicesResponse.Service)
+	{
+		Console.WriteLine($"- {service.Name}");
+	}
+}
 
 var channelOptions = new GrpcChannelOptions()
 {
