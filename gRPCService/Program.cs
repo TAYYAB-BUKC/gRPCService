@@ -1,3 +1,4 @@
+using Grpc.HealthCheck;
 using Grpc.Net.Compression;
 using gRPCService.Auth;
 using gRPCService.Interceptors;
@@ -49,6 +50,9 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddHealthChecks().AddCheck("gRPCService", () => HealthCheckResult.Healthy(), new[] { "grpc", "live" });
+
+builder.Services.AddGrpcHealthChecks();
+builder.Services.AddSingleton<HealthServiceImpl>();
 
 var app = builder.Build();
 
