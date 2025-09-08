@@ -4,6 +4,7 @@ using gRPCService.Interceptors;
 using gRPCService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
 using System.IO.Compression;
@@ -47,11 +48,14 @@ builder.Services.AddAuthorization(options =>
 	});
 });
 
+builder.Services.AddHealthChecks().AddCheck("gRPCService", () => HealthCheckResult.Healthy(), new[] { "grpc", "live" });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GreeterService>();
 app.MapGrpcService<FirstGRPCService>();
+app.MapGrpcHealthChecksService();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();
